@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Birthday!</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      :root {
+        --bsi-teal-dark: #00524c;
+        --bsi-teal: #00786f;
+        --bsi-teal-light: #00a398;
+        --bsi-gold: #e8b341;
+        --bsi-gold-light: #f5d488;
+        --bsi-bg: #f4fbfa;
+      }
+
+      body {
+        background-color: var(--bsi-bg);
+        color: #1f2937;
+        overflow-x: hidden;
+        text-align: center;
+      }
+
+      /* Motif garis khas gradasi BSI, dipakai berulang sebagai aksen */
+      .bsi-swoosh {
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(
+            120deg,
+            transparent 40%,
+            rgba(232, 179, 65, 0.15) 41%,
+            rgba(232, 179, 65, 0.15) 43%,
+            transparent 44%
+          ),
+          linear-gradient(
+            120deg,
+            transparent 55%,
+            rgba(255, 255, 255, 0.12) 56%,
+            rgba(255, 255, 255, 0.12) 58%,
+            transparent 59%
+          );
+        pointer-events: none;
+      }
+
+      /* Hero Section */
+      .hero {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        background: linear-gradient(
+          135deg,
+          var(--bsi-teal-dark) 0%,
+          var(--bsi-teal) 55%,
+          var(--bsi-teal-light) 100%
+        );
+        color: white;
+        border-bottom-left-radius: 50px;
+        border-bottom-right-radius: 50px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .bsi-badge {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(232, 179, 65, 0.6);
+        color: var(--bsi-gold-light);
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        padding: 6px 18px;
+        border-radius: 50px;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+      }
+
+      .hero h1 {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        animation: bounceIn 1.5s ease;
+      }
+
+      .hero p {
+        font-size: 1.2rem;
+        max-width: 600px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        opacity: 0.95;
+      }
+
+      .btn-party {
+        background: linear-gradient(
+          135deg,
+          var(--bsi-gold) 0%,
+          var(--bsi-gold-light) 100%
+        );
+        color: #4a3200;
+        border: none;
+        padding: 15px 30px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        border-radius: 50px;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(232, 179, 65, 0.5);
+        transition: transform 0.3s;
+      }
+
+      .btn-party:hover {
+        transform: scale(1.05);
+      }
+
+      .scroll-hint {
+        margin-top: 40px;
+        font-size: 0.9rem;
+        opacity: 0.85;
+        animation: bob 2s infinite ease-in-out;
+      }
+
+      @keyframes bob {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(8px);
+        }
+      }
+
+      /* Gallery Section */
+      .gallery-section {
+        padding: 60px 20px;
+      }
+
+      .eyebrow {
+        display: inline-block;
+        color: var(--bsi-teal);
+        font-weight: 700;
+        font-size: 0.85rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+
+      .gallery-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: var(--bsi-teal-dark);
+      }
+
+      .gallery-section p {
+        margin-bottom: 40px;
+        color: #4b5563;
+      }
+
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 25px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .photo-card {
+        width: 100%;
+        height: 350px;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 3px solid var(--bsi-gold);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+      }
+
+      .photo-card:hover {
+        transform: translateY(-6px) scale(1.02);
+      }
+
+      .photo-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      /* ===== Wall of Wishes (4 cowok) ===== */
+      .wishes-section {
+        position: relative;
+        padding: 60px 20px;
+        background: linear-gradient(180deg, #ffffff 0%, #e9f6f4 100%);
+        overflow: hidden;
+      }
+
+      .wishes-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: var(--bsi-teal-dark);
+      }
+
+      .wishes-section > p {
+        margin-bottom: 40px;
+        color: #4b5563;
+      }
+
+      .wishes-grid {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      .wish-card {
+        background: white;
+        border-radius: 16px;
+        padding: 25px 20px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        border-top: 4px solid var(--bsi-gold);
+        transition: transform 0.3s;
+      }
+
+      .wish-card:hover {
+        transform: translateY(-6px);
+      }
+
+      .wish-card p {
+        color: #374151;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 12px;
+      }
+
+      .wish-card span {
+        font-weight: 700;
+        color: var(--bsi-teal-dark);
+        font-size: 0.9rem;
+      }
+
+      /* ===== Surat Penutup ===== */
+      .letter-section {
+        position: relative;
+        padding: 70px 20px;
+        background: linear-gradient(
+          135deg,
+          var(--bsi-teal-dark) 0%,
+          var(--bsi-teal) 60%,
+          var(--bsi-teal-light) 100%
+        );
+        color: white;
+        overflow: hidden;
+      }
+
+      .letter-box {
+        position: relative;
+        z-index: 1;
+        max-width: 650px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(232, 179, 65, 0.5);
+        border-radius: 20px;
+        padding: 40px 30px;
+        text-align: center;
+        line-height: 1.8;
+      }
+
+      .letter-box p {
+        margin-bottom: 15px;
+      }
+
+      .letter-signature {
+        margin-top: 25px;
+        font-weight: 800;
+        font-size: 1.2rem;
+        text-align: center;
+        color: var(--bsi-gold-light);
+      }
+
+      /* Footer */
+      footer {
+        padding: 22px;
+        background-color: var(--bsi-teal-dark);
+        color: white;
+        font-size: 0.9rem;
+      }
+
+      footer span {
+        color: var(--bsi-gold-light);
+        font-weight: 600;
+      }
+
+      @keyframes bounceIn {
+        0% {
+          transform: scale(0.3);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1.05);
+          opacity: 1;
+        }
+        70% {
+          transform: scale(0.9);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @media (max-width: 600px) {
+        .hero h1 {
+          font-size: 2.2rem;
+        }
+        .hero p {
+          font-size: 1rem;
+        }
+        .gallery-section h2,
+        .wishes-section h2 {
+          font-size: 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Bagian Paling Atas (Hero) -->
+    <section class="hero">
+      <div class="bsi-swoosh"></div>
+      <div class="hero-content">
+        <!-- GANTI NAMA TEMANMU DI SINI -->
+        <div class="bsi-badge">DARI ANAK-ANAK</div>
+        <h1>Happy Birthday yee Naurahh! 🎂</h1>
+
+        <!-- GANTI UCAPANNYA DI SINI -->
+        <p>
+          Selamat bertambah umur yhh buat salah satu anak magang kesayangan
+          operasional Area Cirebon Bank Syariah Indonesia! 🎉 Semoga panjang
+          umur, sehat selalu, rezekinya lancar dan berkah, serta segala urusan
+          karirnya dipermudah. Makasih udah jadi partner magang yang seru dan
+          asik! #AMANBANGETGOKILL
+        </p>
+
+        <button class="btn-party" onclick="tembakKonfeti()">
+          Pencet Aku Bang!
+        </button>
+        <div class="scroll-hint">↓ scroll cepet!!! ↓</div>
+      </div>
+    </section>
+
+    <!-- Bagian Galeri Foto Kenangan -->
+    <section class="gallery-section">
+      <span class="eyebrow">APENIHHH</span>
+      <h2>ANJAY BANGET GOKILL 📸</h2>
+
+      <div class="grid-container">
+        <!-- GANTI SETIAP LINK FOTO DI BAWAH INI -->
+        <div class="photo-card">
+          <img src="naur 1.jpeg" alt="Foto Kenangan 1" />
+        </div>
+
+        <div class="photo-card">
+          <img src="naur 2.jpeg" alt="Foto Kenangan 2" />
+        </div>
+
+        <div class="photo-card">
+          <img src="naur 3.jpeg" alt="Foto Kenangan 3" />
+        </div>
+
+        <div class="photo-card">
+          <img src="naur 4.jpeg" alt="Foto Kenangan 4" />
+        </div>
+
+        <div class="photo-card">
+          <img src="naur 5.jpeg" alt="Foto Kenangan 5" />
+        </div>
+
+        <div class="photo-card">
+          <img src="naur 6.jpeg" alt="Foto Kenangan 6" />
+        </div>
+
+        <div class="photo-card">
+          <img src="naur 7.jpeg" alt="Foto Kenangan 7" />
+        </div>
+
+        <div class="photo-card">
+          <img src="NAUR 8.jpeg" alt="Foto Kenangan 8" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Bagian Ucapan dari 4 Cowok -->
+    <section class="wishes-section">
+      <h2>Ucapan dari Kami 💌</h2>
+      <p>Para cowok-cowok GreenFlag nitip ucapan nih!</p>
+
+      <div class="wishes-grid">
+        <!-- GANTI NAMA & ISI UCAPAN SESUAI TIM KALIAN -->
+        <div class="wish-card">
+          <p>
+            "MET HBD YH NAU, semoga makin apa yh? semoga sukses terus yaa...
+            Bhapp"
+          </p>
+          <span>— Nopal</span>
+        </div>
+        <div class="wish-card">
+          <p>"HBD nau, semoga sukses amiin🤙🔥"</p>
+          <span>— Aroy</span>
+        </div>
+        <div class="wish-card">
+          <p>"Semoga semoga semoga, semoga aja deh. Aamiin!"</p>
+          <span>— Minal</span>
+        </div>
+        <div class="wish-card">
+          <p>"Panjang umur dan sehat selalu yaa Nau."</p>
+          <span>— Tony</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bagian Surat Penutup -->
+    <section class="letter-section">
+      <div class="bsi-swoosh"></div>
+      <div class="letter-box">
+        <!-- GANTI ISI SURAT SESUAI PERASAANMU -->
+        <p>Halo Naurah,</p>
+        <p>
+          Anjay HBD yee Nauuuu. Thank you lohh udah jadi bahan bullyan kita
+          wkwkwkwkk.... Canda yhh, semoga di umur yang bertambah ini makin
+          sukses yaa, makin baikk, makin berkahh, semoga ketemu jodoh yang baikk
+          supaya ga trial mulu wkwkwkkw. makasi loh untuk semuanya yaa!!!
+        </p>
+        <div class="letter-signature">Laki-Laki GreenFlag 🎉</div>
+      </div>
+    </section>
+
+    <!-- Script Javascript untuk Hujan Konfeti -->
+    <script>
+      window.onload = function () {
+        var duration = 3 * 1000;
+        var animationEnd = Date.now() + duration;
+        var defaults = {
+          startVelocity: 30,
+          spread: 360,
+          ticks: 60,
+          zIndex: 0,
+          colors: ["#00786F", "#00A398", "#E8B341", "#F5D488", "#ffffff"],
+        };
+
+        function randomInRange(min, max) {
+          return Math.random() * (max - min) + min;
+        }
+
+        var interval = setInterval(function () {
+          var timeLeft = animationEnd - Date.now();
+
+          if (timeLeft <= 0) {
+            return clearInterval(interval);
+          }
+
+          var particleCount = 50 * (timeLeft / duration);
+          confetti(
+            Object.assign({}, defaults, {
+              particleCount,
+              origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+            }),
+          );
+          confetti(
+            Object.assign({}, defaults, {
+              particleCount,
+              origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+            }),
+          );
+        }, 250);
+      };
+
+      function tembakKonfeti() {
+        confetti({
+          particleCount: 150,
+          spread: 100,
+          origin: { y: 0.6 },
+          colors: ["#00786F", "#00A398", "#E8B341", "#F5D488", "#ffffff"],
+        });
+      }
+    </script>
+  </body>
+</html>
